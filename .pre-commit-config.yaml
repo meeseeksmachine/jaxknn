@@ -14,7 +14,7 @@ repos:
       - id: mixed-line-ending
       - id: name-tests-test
         args: ["--pytest-test-first"]
-        exclude: ^tests/benchmarks/
+        exclude: ^tests/(benchmarks/|_compat\.py$)
       - id: trailing-whitespace
 
   - repo: https://github.com/python-jsonschema/check-jsonschema

@@ -8,6 +8,8 @@ import jax.numpy as jnp
 import numpy as np
 import pytest
 
+from tests._compat import enable_x64
+
 from jaxknn import tree as kd
 from jaxknn.tree._build import build_tree
 from jaxknn.tree._layout import layout
@@ -241,7 +243,7 @@ class TestAllKnn:
     def test_float64(self, n):
         """Under x64, float64 points stay float64 and stay exact."""
         p = np.random.default_rng(n).normal(size=(n, 3))
-        with jax.enable_x64(new_val=True):
+        with enable_x64(new_val=True):
             idx, d2 = kd.all_knn(jnp.asarray(p), 10, frontier=2)
             assert d2.dtype == jnp.float64
             _assert_exact(p, idx, d2, 10)
@@ -525,7 +527,7 @@ class TestExclude:
 
     def test_x64(self):
         """Float64 points and int64 labels."""
-        with jax.enable_x64(new_val=True):
+        with enable_x64(new_val=True):
             rng = np.random.default_rng(7)
             p = rng.normal(size=(300, 3))
             lab = rng.integers(0, 20, 300)

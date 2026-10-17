@@ -26,7 +26,7 @@ theme:
 site_name: jaxknn
 site_description: The documentation for jaxknn, exact k-nearest neighbours in JAX.
 site_author: Nathaniel Starkman
-site_url: https://nstarman.github.io/jaxknn
+site_url: https://nstarkman.space/jaxknn
 
 repo_url: https://github.com/nstarman/jaxknn
 repo_name: nstarman/jaxknn
