@@ -1,0 +1,42 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: "v6.0.0"
+    hooks:
+      - id: no-commit-to-branch
+        args: ["--branch", "main"]
+        always_run: true
+      - id: check-added-large-files
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-yaml
+      - id: debug-statements
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+      - id: name-tests-test
+        args: ["--pytest-test-first"]
+        exclude: ^tests/benchmarks/
+      - id: trailing-whitespace
+
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.36.0
+    hooks:
+      - id: check-github-workflows
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.14
+    hooks:
+      - id: ruff-check
+        types_or: [python, pyi]
+        args: [--fix, --show-fixes]
+      - id: ruff-format
+        types_or: [python, pyi]
+
+  - repo: https://github.com/codespell-project/codespell
+    rev: "v2.4.1"
+    hooks:
+      - id: codespell
+
+  - repo: https://github.com/ComPWA/taplo-pre-commit
+    rev: v0.9.3
+    hooks:
+      - id: taplo-format

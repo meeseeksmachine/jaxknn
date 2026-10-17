@@ -12,10 +12,10 @@ __all__: tuple[str, ...] = ("kth_smallest", "ksmallest")
 
 import jax
 import jax.numpy as jnp
-from jaxtyping import Array, Float, Int
+from jaxtyping import Array, Float, Int, Real
 
 
-def _network(at: Float[Array, "W Q"], k: int, /) -> Float[Array, "k Q"]:
+def _network(at: Real[Array, "W Q"], k: int, /) -> Real[Array, "k Q"]:
     """Sorted k smallest of each column of ``at`` by insertion.
 
     ``t_i' = min(t_i, max(t_{i-1}, c))`` on k separate ``(Q,)`` carries, scanned
@@ -43,7 +43,7 @@ def _top(dtype: jnp.dtype, /) -> float | int:
     return jnp.inf if jnp.issubdtype(dtype, jnp.floating) else jnp.iinfo(dtype).max
 
 
-def _pad_width(d2: Array, k: int, /, fill: float | None = None) -> Array:
+def _pad_width(d2: Array, k: int, /, fill: float | int | None = None) -> Array:
     w = d2.shape[-1]
     if w >= k:
         return d2

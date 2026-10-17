@@ -1,7 +1,8 @@
-"""Self-contained exact kd-tree kNN in JAX.
+"""The raw exact kd-tree: build, query, label-excluding queries, brute force.
 
-Imports only the standard library, numpy, jax, jaxtyping and equinox -- never
-the parent package -- so it can be lifted into its own library.
+Lower level than :func:`jaxknn.knn`: no input validation, no coordinate
+scaling and no eager size buckets, and distances are squared. Use it for
+custom queries such as ``knn(tree, q, k, exclude=(point_labels, query_labels))``.
 """
 
 __all__: tuple[str, ...] = (

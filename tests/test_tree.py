@@ -1,4 +1,4 @@
-"""Tests for the self-contained JAX kd-tree (``phasecurvefit._src.kdtree``)."""
+"""Tests for the self-contained JAX kd-tree (``jaxknn.tree``)."""
 
 import functools
 import importlib
@@ -8,10 +8,10 @@ import jax.numpy as jnp
 import numpy as np
 import pytest
 
-from phasecurvefit._src import kdtree as kd
-from phasecurvefit._src.kdtree._build import build_tree
-from phasecurvefit._src.kdtree._layout import layout
-from phasecurvefit._src.kdtree._select import ksmallest, kth_smallest
+from jaxknn import tree as kd
+from jaxknn.tree._build import build_tree
+from jaxknn.tree._layout import layout
+from jaxknn.tree._select import ksmallest, kth_smallest
 
 
 class TestLayout:
@@ -249,7 +249,7 @@ class TestAllKnn:
     @pytest.mark.parametrize("leaf_size", [1, 2, 16])
     def test_bound_block_stays_local(self, leaf_size):
         """leaf_size=1 grew the bound block to the whole tree (O(n**2))."""
-        from phasecurvefit._src.kdtree._query import _bound_leaves  # noqa: PLC0415
+        from jaxknn.tree._query import _bound_leaves  # noqa: PLC0415
 
         p = jnp.asarray(np.random.default_rng(0).normal(size=(10_000, 3)), jnp.float32)
         tree = build_tree(p, leaf_size=leaf_size)
@@ -388,7 +388,7 @@ class TestBruteTier:
     @pytest.mark.parametrize("frontier", [1, 2])
     def test_forced_tiers_exact(self, monkeypatch, frontier):
         """All-points and bichromatic (incl. far) queries stay exact through brute."""
-        q_mod = importlib.import_module("phasecurvefit._src.kdtree._query")
+        q_mod = importlib.import_module("jaxknn.tree._query")
         monkeypatch.setattr(q_mod, "TIERS", (2, 4))
         monkeypatch.setattr(q_mod, "TIER_CHUNK", (3, 5))
         monkeypatch.setattr(q_mod, "BRUTE_CHUNK", 7)
@@ -450,7 +450,12 @@ class TestExclude:
         p = jnp.zeros((40, 2), jnp.float32)
         jaxpr = jax.make_jaxpr(lambda p: kd.all_knn(p, 4))(p).jaxpr
         (scan,) = [e for e in jaxpr.eqns if e.primitive.name == "scan"]
-        n_xs = len(scan.invars) - scan.params["num_consts"] - scan.params["num_carry"]
+        if "num_consts" in scan.params:  # jax < 0.11
+            n_xs = (
+                len(scan.invars) - scan.params["num_consts"] - scan.params["num_carry"]
+            )
+        else:  # jax >= 0.11: ft_in unpacks to (consts, carry, xs)
+            n_xs = len(scan.params["ft_in"].unpack()[2])
         assert n_xs == 3
 
     def _check(self, n, d, kind, k, frontier=16, seed=0, leaf_size=16, *, grid=False):
@@ -491,7 +496,7 @@ class TestExclude:
 
     def test_forced_tiers(self, monkeypatch):
         """Exact through the overflow tiers and brute force."""
-        q_mod = importlib.import_module("phasecurvefit._src.kdtree._query")
+        q_mod = importlib.import_module("jaxknn.tree._query")
         monkeypatch.setattr(q_mod, "TIERS", (2, 4))
         monkeypatch.setattr(q_mod, "TIER_CHUNK", (3, 5))
         monkeypatch.setattr(q_mod, "BRUTE_CHUNK", 7)

@@ -12,7 +12,7 @@ import numpy as np
 import pytest
 from scipy.spatial import cKDTree
 
-from phasecurvefit._src import kdtree as kd
+from jaxknn import tree as kd
 
 K = 10
 

@@ -11,7 +11,7 @@ import jax.numpy as jnp
 import numpy as np
 from hypothesis import given, settings, strategies as st
 
-from phasecurvefit._src import kdtree as kd
+from jaxknn import tree as kd
 
 
 def _lower_index_oracle(p, k):
@@ -48,7 +48,7 @@ def test_all_knn_equals_brute(n, d, k, frontier, leaf_size, seed, data):
         p[: n // 2] = p[0]
     f = functools.partial(kd.all_knn, k=k, frontier=frontier, leaf_size=leaf_size)
     idx, d2 = jax.jit(f)(jnp.asarray(p))
-    ref_i, ref_d = kd.brute_knn(jnp.asarray(p), k)
+    _, ref_d = kd.brute_knn(jnp.asarray(p), k)
     np.testing.assert_allclose(np.asarray(d2), np.asarray(ref_d), rtol=1e-5, atol=1e-12)
     idx = np.asarray(idx)
     fin = np.isfinite(np.asarray(d2))

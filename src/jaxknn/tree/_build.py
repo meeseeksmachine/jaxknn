@@ -28,10 +28,10 @@ class Tree(eqx.Module):
     points: Float[Array, "n_pad d"]  # padding rows are 0
     perm: Int[Array, " n_pad"]  # original index per row; ``n`` on padding
     valid: Bool[Array, " n_pad"]
-    cell_lo: tuple[Float[Array, "nodes d"], ...]  # per level 0..depth
-    cell_hi: tuple[Float[Array, "nodes d"], ...]
-    split_dim: tuple[Int[Array, " nodes"], ...]  # per level 0..depth-1
-    split_val: tuple[Float[Array, " nodes"], ...]
+    cell_lo: tuple[Float[Array, "_nodes d"], ...]  # per level 0..depth
+    cell_hi: tuple[Float[Array, "_nodes d"], ...]
+    split_dim: tuple[Int[Array, " _nodes"], ...]  # per level 0..depth-1
+    split_val: tuple[Float[Array, " _nodes"], ...]
     n: int = eqx.field(static=True)
     depth: int = eqx.field(static=True)
     leaf_size: int = eqx.field(static=True)  # effective, B_eff

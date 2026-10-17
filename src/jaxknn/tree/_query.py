@@ -27,7 +27,7 @@ from collections.abc import Callable
 
 import jax
 import jax.numpy as jnp
-from jaxtyping import Array, Float, Int
+from jaxtyping import Array, ArrayLike, Float, Int
 
 from ._build import Tree, build_tree
 from ._select import ksmallest, kth_smallest
@@ -298,7 +298,7 @@ def _query(
     n_chunks = -(-nq // qc)
     padn = n_chunks * qc - nq
 
-    def pad(a: Array, fill: float) -> Array:
+    def pad(a: Array, fill: float | int) -> Array:
         return jnp.concat([a, jnp.full((padn, *a.shape[1:]), fill, a.dtype)])
 
     def chunk(args: tuple[Array, ...]) -> tuple[Array, ...]:
@@ -402,7 +402,7 @@ def knn(
     k: int,
     *,
     frontier: int = 16,
-    exclude: tuple[Int[Array, " n"], Int[Array, " m"]] | None = None,
+    exclude: tuple[ArrayLike, ArrayLike] | None = None,
 ) -> tuple[Int[Array, "m k"], Float[Array, "m k"]]:
     """Exact k nearest tree points to each query (no self-exclusion).
 

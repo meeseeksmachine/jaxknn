@@ -1,0 +1,82 @@
+theme:
+    name: material
+    features:
+        - navigation.sections  # Sections are included in the navigation on the left.
+        - toc.integrate  # Table of contents is integrated on the left; does not appear separately on the right.
+        - header.autohide  # header disappears as you scroll
+    palette:
+        # Light mode / dark mode. Default to light, with an obvious toggle.
+        - scheme: default
+          primary: white
+          accent: amber
+          toggle:
+             icon: material/weather-night
+             name: Switch to dark mode
+        - scheme: slate
+          primary: black
+          accent: amber
+          toggle:
+             icon: material/weather-sunny
+             name: Switch to light mode
+    icon:
+        repo: fontawesome/brands/github  # GitHub logo in top right
+        logo: "material/graph-outline"  # top left
+    custom_dir: "docs/_overrides"  # Overriding part of the HTML
+
+site_name: jaxknn
+site_description: The documentation for jaxknn, exact k-nearest neighbours in JAX.
+site_author: Nathaniel Starkman
+site_url: https://nstarman.github.io/jaxknn
+
+repo_url: https://github.com/nstarman/jaxknn
+repo_name: nstarman/jaxknn
+edit_uri: ""
+
+extra_css:
+    - _static/custom_css.css
+
+markdown_extensions:
+    - pymdownx.superfences  # Syntax highlighting with the Material theme.
+    - pymdownx.tabbed:
+        alternate_style: true
+    - pymdownx.details  # Hidden expandable regions denoted by ???
+    - pymdownx.snippets:  # Include one Markdown file into another
+        base_path: docs
+    - admonition
+    - toc:
+        permalink: "¤"  # Clickable permalink on each section heading
+        toc_depth: 4
+
+plugins:
+    - search:
+        # Allow searching e.g. 'knn' to match 'jaxknn.knn'.
+        separator: '[\s\-,:!=\[\]()"/]+|(?!\b)(?=[A-Z][a-z])|\.(?!\d)|&[lg]t;'
+    - hippogriffe
+    - mkdocstrings:
+        handlers:
+            python:
+                options:
+                    force_inspection: true
+                    heading_level: 4
+                    members_order: source
+                    show_bases: false
+                    show_if_no_docstring: true
+                    show_overloads: false
+                    show_root_heading: true
+                    show_signature_annotations: true
+                    show_source: false
+                    show_symbol_type_heading: true
+                    show_symbol_type_toc: true
+
+nav:
+    - 'index.md'
+    - How-to:
+        - 'how-to/use-under-jit-vmap-grad.md'
+        - 'how-to/find-the-nearest-point-with-another-label.md'
+        - 'how-to/tune-for-large-k-or-high-dimension.md'
+    - Explanation:
+        - 'how-it-works.md'
+        - 'when-to-use-scipy-instead.md'
+    - Reference:
+        - 'api/jaxknn.md'
+        - 'api/tree.md'

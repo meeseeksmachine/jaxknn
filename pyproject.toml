@@ -1,0 +1,159 @@
+[project]
+authors = [
+  { name = "Nathaniel Starkman", email = "nstarman@users.noreply.github.com" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Natural Language :: English",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Scientific/Engineering",
+  "Typing :: Typed",
+]
+dependencies = [
+  "equinox>=0.13.5",
+  "jax>=0.7.2",
+  "jaxtyping>=0.3.5",
+  "numpy>=2.0",
+]
+description = "Exact k-nearest neighbours in JAX: a kd-tree that traces under jit, vmap and grad."
+dynamic = ["version"]
+keywords = ["jax", "knn", "kd-tree", "nearest-neighbors"]
+license = "MIT"
+license-files = ["LICENSE"]
+name = "jaxknn"
+readme = "README.md"
+requires-python = ">=3.12"
+
+[project.urls]
+"Bug Tracker" = "https://github.com/nstarman/jaxknn/issues"
+Changelog = "https://github.com/nstarman/jaxknn/releases"
+Documentation = "https://nstarman.github.io/jaxknn"
+"Source Code" = "https://github.com/nstarman/jaxknn"
+
+[build-system]
+build-backend = "hatchling.build"
+requires = ["hatch-vcs", "hatchling"]
+
+[dependency-groups]
+dev = [
+  { include-group = "docs" },
+  { include-group = "lint" },
+  { include-group = "tests" },
+]
+docs = [
+  "hippogriffe==0.2.2",
+  "mkdocstrings[python]==1.0.6",
+  "pymdown-extensions==12.1",
+  "zensical",
+]
+lint = ["prek>=0.3.11", "ruff>=0.15.9"]
+tests = [
+  "beartype>=0.20.2",
+  "hypothesis[numpy]>=6.138.14",
+  "pytest>=8.3.5",
+  "pytest-cov>=6.0",
+  "pytest-env>=1.1.5",
+  "sybil>=9",
+]
+# Performance benchmarks, kept out of the default suite. Run locally with
+# `uv run --group bench pytest tests/benchmarks --codspeed`.
+bench = [
+  { include-group = "tests" },
+  "jaxkd>=0.0.5",
+  "pytest-codspeed>=3.1.0",
+  "scipy>=1.14",
+]
+
+[tool.hatch]
+build.hooks.vcs.version-file = "src/jaxknn/_version.py"
+version.source = "vcs"
+
+[tool.hatch.version.raw-options]
+local_scheme = "no-local-version"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/jaxknn"]
+
+
+[tool.pytest.ini_options]
+addopts = [
+  "--jaxtyping-packages=jaxknn,beartype.beartype",
+  "--showlocals",
+  "--strict-config",
+  "--strict-markers",
+  "-p no:doctest",                                 # using sybil
+  "-ra",
+  "--ignore=tests/benchmarks/",                    # run with `--group bench` explicitly
+]
+filterwarnings = ["error"]
+log_level = "INFO"
+minversion = "8.3"
+norecursedirs = [".*", "__pycache__", "site"]
+testpaths = ["README.md", "docs", "src/", "tests/"]
+xfail_strict = true
+
+[tool.pytest_env]
+JAX_PLATFORMS = { value = "cpu", skip_if_set = true }
+
+
+[tool.coverage]
+report.exclude_also = ['\.\.\.', 'if TYPE_CHECKING:']
+run.branch = true
+run.source = ["jaxknn"]
+
+
+[tool.ruff.lint]
+extend-select = ["ALL"]
+ignore = [
+  "ANN401",  # Dynamically typed expressions (typing.Any) are disallowed
+  "COM812",  # <- for ruff.format
+  "D105",    # Missing docstring in magic method
+  "D107",    # Missing docstring in __init__
+  "D203",    # 1 blank line required before class docstring
+  "D213",    # Multi-line docstring summary should start at the second line
+  "ERA001",  # Commented out code
+  "F722",    # Syntax error in forward annotation <- jaxtyping
+  "F821",    # undefined name '...'  <- jaxtyping
+  "FIX002",  # Line contains TODO
+  "ISC001",  # Conflicts with formatter
+  "N806",    # Variable in function should be lowercase
+  "PLR09",   # Too many <...>
+  "PLR2004", # Magic value used in comparison
+  "PYI041",  # Use `float` instead of `int | float` <- beartype checks at runtime
+  "RUF022",  # `__all__` is not sorted
+  "TD002",   # Missing author in TODO
+  "TD003",   # Missing issue link on the line following this TODO
+]
+
+[tool.ruff.lint.per-file-ignores]
+"**tests/**" = [
+  "ANN",
+  "D103",
+  "E731",
+  "INP001",
+  "N803",
+  "S101",
+  "SLF001",
+  "T20",
+]
+"conftest.py" = ["ANN", "INP001"]
+"src/jaxknn/_version.py" = ["ALL"]
+
+[tool.ruff.lint.flake8-import-conventions.aliases]
+equinox = "eqx"
+"hypothesis.strategies" = "st"
+"jax.numpy" = "jnp"
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+known-local-folder = ["jaxknn"]
+
+[tool.ruff.format]
+docstring-code-format = true
