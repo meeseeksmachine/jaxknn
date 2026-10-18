@@ -34,7 +34,7 @@ requires-python = ">=3.12"
 [project.urls]
 "Bug Tracker" = "https://github.com/nstarman/jaxknn/issues"
 Changelog = "https://github.com/nstarman/jaxknn/releases"
-Documentation = "https://nstarman.github.io/jaxknn"
+Documentation = "https://nstarkman.space/jaxknn"
 "Source Code" = "https://github.com/nstarman/jaxknn"
 
 [build-system]

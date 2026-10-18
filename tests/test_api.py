@@ -5,6 +5,8 @@ import jax.numpy as jnp
 import numpy as np
 import pytest
 
+from tests._compat import enable_x64
+
 import jaxknn
 from jaxknn import _api
 
@@ -114,7 +116,7 @@ class TestContract:
         """Under x64, float64 stays float64 and nothing scatters int64 into int32."""
         p = np.random.default_rng(9).normal(size=(200, 3))
         q = p[:20] * 3
-        with jax.enable_x64(new_val=True):
+        with enable_x64(new_val=True):
             for qq in (None, jnp.asarray(q)):
                 _, dist = search(jnp.asarray(p), 4, queries=qq)
                 assert dist.dtype == jnp.float64
